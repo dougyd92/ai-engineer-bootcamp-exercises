@@ -4,7 +4,12 @@ Run it from the top folder of the repository:
     python session-04/round_4/quiz_bot.py
 """
 
-from practice_api import ask
+import logging
+from time import sleep
+
+from practice_api import ask, PracticeAPIError
+
+logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 QUESTIONS = [
     "What is a token?",
@@ -19,5 +24,13 @@ for question in QUESTIONS:
     try:
         answer = ask(question)
         print(f"A: {answer}")
-    except Exception:
-        print("Something went wrong.")
+        
+
+    except PracticeAPIError as error:
+        logging.warning("API request failed: question=%r error=%s", question, error)
+        # print(f"Something went wrong. Try again in a bit.")
+
+    except Exception as error:
+        logging.exception("Unexpected error: question=%r error=%s", question, error)
+        # print(f"Something went wrong: {error}")
+        raise
